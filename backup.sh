@@ -26,8 +26,8 @@ BORG_PRUNE=()
 [[ -n "$BORG_KEEP_WITHIN" ]] && BORG_PRUNE+=(--keep-within "$BORG_KEEP_WITHIN")
 
 NOW=$( date "+${BORG_DATEPATTERN}" )
-if [[ ${BORG_REPO[0]} != "/" ]]; then
-    export BORG_RSH="ssh -o StrictHostKeyChecking=accept-new -i ${BORG_KEY:-/run/secrets/borg_ssh_key}"
+if [[ -f /etc/borg_ssh_key ]]; then
+    export BORG_RSH="ssh -o StrictHostKeyChecking=accept-new -i ${BORG_KEY:-/etc/borg_ssh_key}"
 fi
 
 [[ -n "$BORG_REPO" ]] || die "BORG_REPO is not set"
