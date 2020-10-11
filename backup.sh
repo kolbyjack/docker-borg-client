@@ -36,7 +36,8 @@ fi
 
 # TODO: Dump database snapshots
 
-if ! borg list :: && [[ "$?" == "2" ]]; then
+borg list :: && list_result=$? || list_result=$?
+if [[ ${list_result} -eq 2 ]]; then
     borg init --encryption="${BORG_ENCRYPTION}" ::
 fi
 
