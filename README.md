@@ -5,12 +5,12 @@ To use, mount the volumes you wish to backup under /backup, then configure the f
 |Secret|Description|
 |---|---|
 |`borg_ssh_key`|The private key used for remote backups|
+|`borg_passphrase`|The passphrase to use with `repokey` encrypted repositories (Required when `BORG_ENCRYPTION` is `repokey`)|
 
 |Variable|Default|Description|
 |---|---|---|
 |`BORG_REPO`|_none_|The target borg repository where archives will be stored (Required)|
 |`BORG_ARCHIVE_NAME`|_none_|The base name to use when creating an archive (Required)|
-|`BORG_PASSPHRASE`|_none_|The passphrase to use with `repokey` encrypted repositories (Required when `BORG_ENCRYPTION` is `repokey`)|
 |`BORG_DATEPATTERN`|`-%Y-%m-%d-%H-%M-%S`|The `date` pattern suffix to use when creating archives|
 |`BORG_ENCRYPTION`|`repokey`|The encryption type to use (`repokey`, `keyfile`, `authenticated`)|
 |`BORG_KEEP_DAILY`|_none_|The number of daily backups to keep when pruning|

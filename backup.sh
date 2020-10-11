@@ -7,14 +7,16 @@ die() {
 
 set -e
 
+renice +19 -p $$
+
 source /etc/backup.env
 
 BORG_ENCRYPTION=${BORG_ENCRYPTION:-repokey}
 BORG_DATEPATTERN=${BORG_DATEPATTERN:-%Y-%m-%d-%H-%M-%S}
 
-[[ -n "$BORG_REPO" ]] || die "BORG_REPO is not set"
-[[ -n "$BORG_ARCHIVE_NAME" ]] || die "BORG_ARCHIVE_NAME is not set"
-[[ -n "$BORG_PASSPHRASE" || "${BORG_ENCRYPTION}" != "repokey" ]] || die "BORG_PASSPHRASE is not set"
+if [[ -f /run/secrets/borg_passphrase ]]; then
+    export BORG_PASSPHRASE=$( cat /run/secrets/borg_passphrase | xargs echo -n )
+fi
 
 BORG_PRUNE=()
 [[ -n "$BORG_KEEP_DAILY" ]] && BORG_PRUNE+=(--keep-daily "$BORG_KEEP_DAILY")
@@ -23,14 +25,16 @@ BORG_PRUNE=()
 [[ -n "$BORG_KEEP_YEARLY" ]] && BORG_PRUNE+=(--keep-yearly "$BORG_KEEP_YEARLY")
 [[ -n "$BORG_KEEP_WITHIN" ]] && BORG_PRUNE+=(--keep-within "$BORG_KEEP_WITHIN")
 
-renice +19 -p $$
-
-# TODO: Dump database snapshots
-
 NOW=$( date "+${BORG_DATEPATTERN}" )
 if [[ ${BORG_REPO[0]} != "/" ]]; then
     export BORG_RSH="ssh -i ${BORG_KEY:-/run/secrets/borg_ssh_key}"
 fi
+
+[[ -n "$BORG_REPO" ]] || die "BORG_REPO is not set"
+[[ -n "$BORG_ARCHIVE_NAME" ]] || die "BORG_ARCHIVE_NAME is not set"
+[[ -n "$BORG_PASSPHRASE" || "${BORG_ENCRYPTION}" != "repokey" ]] || die "BORG_PASSPHRASE is not set"
+
+# TODO: Dump database snapshots
 
 borg list ::
 if [[ "$?" == "2" ]]; then
