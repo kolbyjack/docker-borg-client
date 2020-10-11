@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk --no-cache add bash borgbackup openssh-client
+RUN apk --no-cache add bash borgbackup curl openssh-client
 
 COPY backup.sh /etc/periodic/daily/
 RUN chmod +x /etc/periodic/daily/backup.sh
