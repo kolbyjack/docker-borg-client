@@ -9,5 +9,5 @@ fi
 
 printenv | grep ^BORG_ > /etc/backup.env
 
-exec "$@"
+exec /usr/sbin/crond -f -d ${CROND_LOG_LEVEL:-8}
 

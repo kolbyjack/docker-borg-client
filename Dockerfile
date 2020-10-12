@@ -8,5 +8,5 @@ RUN chmod +x /etc/periodic/daily/backup.sh
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod +x /sbin/entrypoint.sh
 
-ENTRYPOINT ["/sbin/entrypoint.sh", "/usr/sbin/crond", "-f"]
+ENTRYPOINT ["/sbin/entrypoint.sh"]
 
