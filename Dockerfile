@@ -10,3 +10,5 @@ RUN chmod +x /sbin/entrypoint.sh
 
 ENTRYPOINT ["/sbin/entrypoint.sh"]
 
+HEALTHCHECK CMD test ! -f /tmp/backup_failed
+

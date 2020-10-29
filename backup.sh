@@ -5,7 +5,16 @@ die() {
 	exit 1
 }
 
+onexit() {
+    if [[ $? -eq 0 ]]; then
+        rm -f /tmp/backup_failed
+    else
+        touch /tmp/backup_failed
+    fi
+}
+
 set -e
+trap onexit EXIT
 
 renice +19 -p $$
 
