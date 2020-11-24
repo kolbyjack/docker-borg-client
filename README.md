@@ -21,4 +21,5 @@ To use, mount the volumes you wish to backup under /backup, then configure the f
 |`BORG_KEEP_WITHIN`|_none_|Keep all archives within this time interval|
 |`BORG_POST_BACKUP_URL`|_none_|If set, a url to request when the backup is complete|
 |`BORG_REMOTE_PATH`|_none_|If set, the path to the borg executable on the server|
+|`BORG_SCHEDULE`|`@daily`|A cron schedule expression to determine when to run the backup|
 |`CROND_LOG_LEVEL`|`8`|The log level to use for crond in the container|
