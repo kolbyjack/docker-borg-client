@@ -10,6 +10,9 @@ onexit() {
         rm -f /tmp/backup_failed
     else
         touch /tmp/backup_failed
+        if [[ -n "${BORG_FAILED_BACKUP_URL}" ]]; then
+            curl -fsSL --retry 3 "${BORG_FAILED_BACKUP_URL}"
+        fi
     fi
 }
 
@@ -19,6 +22,10 @@ trap onexit EXIT
 renice +19 -p $$
 
 source /etc/backup.env
+
+if [[ -n "${BORG_PRE_BACKUP_URL}" ]]; then
+    curl -fsSL --retry 3 "${BORG_PRE_BACKUP_URL}"
+fi
 
 BORG_ENCRYPTION=${BORG_ENCRYPTION:-repokey}
 BORG_DATEPATTERN=${BORG_DATEPATTERN:-%Y-%m-%d-%H-%M-%S}
