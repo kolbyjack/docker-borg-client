@@ -6,13 +6,21 @@ die() {
 }
 
 onexit() {
+    local post_backup_url="${BORG_POST_BACKUP_URL}"
+
     if [[ $? -eq 0 ]]; then
         rm -f /tmp/backup_failed
     else
+        echo "Backup failed!"
         touch /tmp/backup_failed
         if [[ -n "${BORG_FAILED_BACKUP_URL}" ]]; then
-            curl -fsSL --retry 3 "${BORG_FAILED_BACKUP_URL}"
+            post_backup_url="${BORG_FAILED_BACKUP_URL}"
         fi
+    fi
+
+    if [[ -n "${post_backup_url}" ]]; then
+        echo "Calling ${post_backup_url}"
+        curl -fsSL --retry 3 "${post_backup_url}"
     fi
 }
 
@@ -24,6 +32,7 @@ renice +19 -p $$
 source /etc/backup.env
 
 if [[ -n "${BORG_PRE_BACKUP_URL}" ]]; then
+    echo "Calling ${BORG_PRE_BACKUP_URL}"
     curl -fsSL --retry 3 "${BORG_PRE_BACKUP_URL}"
 fi
 
@@ -52,23 +61,23 @@ fi
 
 # TODO: Dump database snapshots
 
-borg list :: && list_result=$? || list_result=$?
+echo "Checking for existing repository"
+borg list :: > /dev/null 2>&1 && list_result=$? || list_result=$?
 if [[ ${list_result} -eq 2 ]]; then
     borg init --encryption="${BORG_ENCRYPTION}" ::
 fi
 
-BORG_CREATE_ARGS=(-v --stats "::${BORG_ARCHIVE_NAME}-${NOW}" /backup)
+BORG_CREATE_ARGS=(-v --stats "::${BORG_ARCHIVE_NAME}-${NOW}")
 if [[ -n "${BORG_EXCLUDE_IF_PRESENT}" ]]; then
     BORG_CREATE_ARGS+=(--exclude-if-present "${BORG_EXCLUDE_IF_PRESENT}")
 fi
 
-borg create "${BORG_CREATE_ARGS[@]}"
+echo "Creating new archive ${BORG_ARCHIVE_NAME}-${NOW}"
+cd /backup
+borg create "${BORG_CREATE_ARGS[@]}" *
 
 if [[ -n "${BORG_PRUNE}" ]]; then
+    echo "Pruning old archives"
     borg prune -v --prefix "${BORG_ARCHIVE_NAME}-" "${BORG_PRUNE[@]}"
-fi
-
-if [[ -n "${BORG_POST_BACKUP_URL}" ]]; then
-    curl -fsSL --retry 3 "${BORG_POST_BACKUP_URL}"
 fi
 
