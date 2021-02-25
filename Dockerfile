@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk --no-cache add bash borgbackup curl openssh-client
+RUN apk --no-cache add bash borgbackup curl openssh-client gzip mysql-client
 
 COPY backup.sh /sbin/backup.sh
 RUN chmod +x /sbin/backup.sh

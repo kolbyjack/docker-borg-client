@@ -59,7 +59,30 @@ fi
 [[ -n "$BORG_ARCHIVE_NAME" ]] || die "BORG_ARCHIVE_NAME is not set"
 [[ -n "$BORG_PASSPHRASE" || "${BORG_ENCRYPTION}" != "repokey" ]] || die "BORG_PASSPHRASE is not set"
 
-# TODO: Dump database snapshots
+if [[ -n "${BORG_MYSQL_HOST}" && -n "${BORG_MYSQL_PASSWORD}" ]]; then
+    BORG_MYSQL_USER=${BORG_MYSQL_USER:-root}
+    BORG_MYSQL_PATH=${BORG_MYSQL_PATH:-/backup/mysqldump}
+    BORG_MYSQL_DUMP_OPTS=${BORG_MYSQL_DUMP_OPTS:---complete-insert --events --routines --triggers --single-transaction}
+
+    if [[ -z "${BORG_MYSQL_DATABASES}" ]]; then
+        BORG_MYSQL_DATABASES=$( mysql -h ${BORG_MYSQL_HOST} -u ${BORG_MYSQL_USER} "-p${BORG_MYSQL_PASSWORD}" -N -e "show databases" )
+    fi
+
+    if [[ "${BORG_MYSQL_GZIP}" != "no" ]]; then
+        dump_filter="gzip"
+        dump_extension=".gz"
+    else
+        dump_filter="cat"
+        dump_extension=""
+    fi
+
+    mkdir -p "${BORG_MYSQL_PATH}"
+    for db in ${BORG_MYSQL_DATABASES}; do
+        if [[ "${db}" != @(information_schema|mysql|performance_schema) ]]; then
+            mysqldump -h ${BORG_MYSQL_HOST} -u ${BORG_MYSQL_USER} "-p${BORG_MYSQL_PASSWORD}" ${BORG_MYSQL_DUMP_OPTS} "$db" | $dump_filter > "${BORG_MYSQL_PATH}/${db}.sql${dump_extension}"
+        fi
+    done
+fi
 
 echo "Checking for existing repository"
 borg list :: > /dev/null 2>&1 && list_result=$? || list_result=$?
