@@ -9,15 +9,15 @@ To use, mount the volumes you wish to backup under /backup, then configure the f
 
 Required Variables
 ==================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_REPO`|_none_|The target borg repository where archives will be stored|
 |`BORG_ARCHIVE_NAME`|_none_|The base name to use when creating an archive|
 
 Variables used to backup MySQL databases
 ========================================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_MYSQL_HOST`|_none_|The MySQL host to connect to. (Required)|
 |`BORG_MYSQL_PASSWORD`|_none_|The password used to connect to MySQL. (Required)|
 |`BORG_MYSQL_USER`|`root`|The user used to connect to MySQL.|
@@ -28,14 +28,14 @@ Variables used to backup MySQL databases
 
 Variables to control repository encryption
 ==========================================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_ENCRYPTION`|`repokey`|The encryption type to use (`repokey`, `keyfile`, `authenticated`)|
 
 Variables to control archive creation and retention
 ===================================================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_DATEPATTERN`|`-%Y-%m-%d-%H-%M-%S`|The `date` pattern suffix to use when creating archives|
 |`BORG_EXCLUDE_IF_PRESENT`|_none_|If set, exclude directories that contain the specified file|
 |`BORG_KEEP_DAILY`|_none_|The number of daily backups to keep when pruning|
@@ -46,21 +46,21 @@ Variables to control archive creation and retention
 
 Variables to control reporting
 ==============================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_FAILED_BACKUP_URL`|_none_|If set, a url to request when the backup fails|
 |`BORG_POST_BACKUP_URL`|_none_|If set, a url to request when the backup is complete|
 |`BORG_PRE_BACKUP_URL`|_none_|If set, a url to request when the backup script begins|
 
 System Variables
 ================
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_REMOTE_PATH`|_none_|If set, the path to the borg executable on the server|
 
 Cron Variables
 ==============
-|Variable|Description|
-|---|---|
+|Variable|Default|Description|
+|---|---|---|
 |`BORG_SCHEDULE`|`@daily`|A cron schedule expression to determine when to run the backup|
 |`CROND_LOG_LEVEL`|`8`|The log level to use for crond in the container|
