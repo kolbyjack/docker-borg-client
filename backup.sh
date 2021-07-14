@@ -90,10 +90,11 @@ if [[ ${list_result} -eq 2 ]]; then
     borg init --encryption="${BORG_ENCRYPTION}" ::
 fi
 
-BORG_CREATE_ARGS=(-v --stats "::${BORG_ARCHIVE_NAME}-${NOW}")
+BORG_CREATE_ARGS=(-v --stats)
 if [[ -n "${BORG_EXCLUDE_IF_PRESENT}" ]]; then
     BORG_CREATE_ARGS+=(--exclude-if-present "${BORG_EXCLUDE_IF_PRESENT}")
 fi
+BORG_CREATE_ARGS+=("::${BORG_ARCHIVE_NAME}-${NOW}")
 
 echo "Creating new archive ${BORG_ARCHIVE_NAME}-${NOW}"
 cd /backup
